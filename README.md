@@ -2,6 +2,8 @@
 
 A [Terraform](https://www.terraform.io) provider for managing [Lima](https://github.com/lima-vm/lima) VM instances. Lima launches Linux virtual machines with automatic file sharing and port forwarding (similar to WSL2), and containerd.
 
+> **Note**: This provider was built as a learning exercise and interacts with `limactl` locally rather than some external API.
+
 ## Requirements
 
 - [Terraform](https://developer.hashicorp.com/terraform/downloads) >= 1.0

@@ -17,7 +17,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// Ensure provider defined types fully satisfy framework interfaces.
 var _ resource.Resource = &LimaDiskResource{}
 var _ resource.ResourceWithImportState = &LimaDiskResource{}
 
@@ -25,10 +24,8 @@ func NewLimaDiskResource() resource.Resource {
 	return &LimaDiskResource{}
 }
 
-// LimaDiskResource defines the resource implementation.
 type LimaDiskResource struct{}
 
-// LimaDiskResourceModel describes the resource data model.
 type LimaDiskResourceModel struct {
 	Name   types.String  `tfsdk:"name"`
 	Size   types.Float64 `tfsdk:"size"`
@@ -92,13 +89,10 @@ func (r *LimaDiskResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	// Build limactl disk create command
 	args := []string{"disk", "create", data.Name.ValueString()}
 
-	// Add required size flag (convert GiB to string with 'G' suffix)
 	args = append(args, fmt.Sprintf("--size=%gG", data.Size.ValueFloat64()))
 
-	// Add format flag
 	if !data.Format.IsNull() {
 		args = append(args, "--format="+data.Format.ValueString())
 	}
@@ -277,9 +271,6 @@ func (r *LimaDiskResource) Delete(ctx context.Context, req resource.DeleteReques
 }
 
 func (r *LimaDiskResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Import using the disk name
 	resource.ImportStatePassthroughID(ctx, path.Root("name"), req, resp)
-
-	// Also set the ID
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }
