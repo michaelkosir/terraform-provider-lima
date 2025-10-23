@@ -25,5 +25,4 @@ resource "lima_disk" "raw_disk" {
 
 - The `size` attribute is required and should be specified in GiB (as a number).
 - The `format` attribute defaults to "qcow2" if not specified.
-- All attributes require disk replacement if changed (disks cannot be modified in place).
 - Disks can be imported using `terraform import lima_disk.<name> <disk-name>`.
