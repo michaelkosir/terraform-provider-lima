@@ -11,7 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -27,10 +26,9 @@ func NewLimaDiskResource() resource.Resource {
 type LimaDiskResource struct{}
 
 type LimaDiskResourceModel struct {
-	Name   types.String  `tfsdk:"name"`
-	Size   types.Float64 `tfsdk:"size"`
-	Format types.String  `tfsdk:"format"`
-	Id     types.String  `tfsdk:"id"`
+	Name types.String  `tfsdk:"name"`
+	Size types.Float64 `tfsdk:"size"`
+	Id   types.String  `tfsdk:"id"`
 }
 
 func (r *LimaDiskResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -51,15 +49,6 @@ func (r *LimaDiskResource) Schema(ctx context.Context, req resource.SchemaReques
 			"size": schema.Float64Attribute{
 				MarkdownDescription: "Size of the disk in GiB. Can be increased (but not decreased) after creation.",
 				Required:            true,
-			},
-			"format": schema.StringAttribute{
-				MarkdownDescription: "Disk format. Defaults to 'qcow2'.",
-				Optional:            true,
-				Computed:            true,
-				Default:             stringdefault.StaticString("qcow2"),
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
@@ -92,10 +81,7 @@ func (r *LimaDiskResource) Create(ctx context.Context, req resource.CreateReques
 	args := []string{"disk", "create", data.Name.ValueString()}
 
 	args = append(args, fmt.Sprintf("--size=%gG", data.Size.ValueFloat64()))
-
-	if !data.Format.IsNull() {
-		args = append(args, "--format="+data.Format.ValueString())
-	}
+	args = append(args, "--format=qcow2")
 
 	// Add --tty=false to disable interactive mode
 	args = append(args, "--tty=false")
